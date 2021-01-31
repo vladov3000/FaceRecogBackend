@@ -1,10 +1,5 @@
 package main
 
-import (
-	"fmt"
-	"infer"
-)
-
 // const PORT = 8000
 
 // func barHandler(w http.ResponseWriter, r *http.Request) {
@@ -19,8 +14,4 @@ import (
 // }
 
 func main() {
-	inferer := infer.NewInferer("build/model/model.dat", "build/model/shape_predictor.dat")
-	res := inferer.GetResults("test-images/obama.jpg")
-	fmt.Printf("%+v\n", res)
-	inferer.Free()
 }

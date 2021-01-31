@@ -38,4 +38,5 @@ mkdir bin
 # compile go
 cd ../src
 go build -o start-server
+echo $PWD
 mv start-server ../build/bin

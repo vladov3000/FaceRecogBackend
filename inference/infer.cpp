@@ -5,32 +5,21 @@
 #include <dlib/image_processing/frontal_face_detector.h>
 
 Inferer::Inferer(char* model_file, char* sp_file) {
-#ifndef NDEBUG
-  std::cout << "[c++] Inferer(\"" << model_file << "\", \"" << sp_file << "\")"
-            << std::endl;
-#endif
-
   this->detector = dlib::get_frontal_face_detector();
 
   dlib::deserialize(sp_file) >> this->sp;
   dlib::deserialize(model_file) >> this->net;
+
+  this->result = nullptr;
 }
 
 Inferer::~Inferer() {
-#ifndef NDEBUG
-  std::cout << "[c++] ~Inferer()" << std::endl;
-#endif
   if (this->result) {
     this->destroy_result();
   }
 }
 
 Result* Inferer::get_result(char* img_path) {
-#ifndef NDEBUG
-  std::cout << "[c++] Inferer->get_encoding(\"" << img_path << "\", \""
-            << img_path << "\")" << std::endl;
-#endif
-
   dlib::matrix<dlib::rgb_pixel> img;
   dlib::load_image(img, img_path);
 
@@ -50,8 +39,6 @@ Result* Inferer::get_result(char* img_path) {
   std::vector<dlib::matrix<float, 0, 1>> face_descriptors = this->net(faces);
 
   int nfaces = faces.size();
-  std::cout << "[c++] " << nfaces << " faces found in image " << img_path
-            << std::endl;
 
   float* encodings = new float[128 * nfaces];
   int encoding_idx = 0;
