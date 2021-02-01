@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -98,8 +99,8 @@ func getResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
 		// Get file extension
 
 		fileExt := filepath.Ext(fileHeader.Filename)
-		if fileExt != ".jpg" && fileExt != ".png" {
-			text := "422 - Expected file extension of .jpg or .png, got " + fileExt
+		if fileExt != ".jpg" && fileExt != ".png" && fileExt != ".jpeg" {
+			text := "422 - Expected file extension of .jpg/.png/.jpeg, got " + fileExt
 			log.Print(text)
 
 			w.WriteHeader(http.StatusUnprocessableEntity)
@@ -135,9 +136,29 @@ func getResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
 		}
 
 		// run inferer to get results
+		result, err := inferer.GetResults(tempFileName)
+		if err != nil {
+			text := "500 - failed to run inferer"
+			log.Printf("Error: %s Response: %s", err, text)
 
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(w, text)
+			return
+		}
+
+		toSend, err := json.Marshal(result)
+		if err != nil {
+			text := "500 - failed to marshal into json"
+			log.Printf("Error: %s Response: %s", err, text)
+
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(w, text)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("200 - everything is ok\n"))
+		w.Write(toSend)
 	}
 }
 
