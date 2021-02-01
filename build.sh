@@ -36,7 +36,6 @@ fi
 mkdir bin
 
 # compile go
-cd ../src
+cd ../src/main
 go build -o start-server
-echo $PWD
-mv start-server ../build/bin
+mv start-server ../../build/bin

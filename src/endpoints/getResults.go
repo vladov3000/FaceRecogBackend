@@ -18,7 +18,7 @@ import (
 // specifies a maximum upload of 10 MB files.
 const MAX_IMG_SIZE = 10 << 20
 
-func getResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
+func GetResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("Results Endpoint Hit")
 

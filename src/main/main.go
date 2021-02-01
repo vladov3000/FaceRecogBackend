@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/vladov3000/FaceRecogBackend/src/endpoints"
 	"github.com/vladov3000/FaceRecogBackend/src/infer"
 )
 
@@ -31,9 +32,9 @@ func main() {
 	}
 
 	// setup route handlers
-	resultsHandler := endpoints.getResultsHandler(tempImgFolder, inferer)
+	resultsHandler := endpoints.GetResultsHandler(tempImgFolder, inferer)
 
-	http.HandleFunc("/status", endpoints.statusHandler)
+	http.HandleFunc("/status", endpoints.StatusHandler)
 	http.HandleFunc("/results", resultsHandler)
 
 	// start server
