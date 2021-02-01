@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/vladov3000/FaceRecogBackend/src/database"
 	"github.com/vladov3000/FaceRecogBackend/src/endpoints"
 	"github.com/vladov3000/FaceRecogBackend/src/infer"
 )
@@ -27,9 +28,11 @@ func main() {
 	sp := "build/model/shape_predictor.dat"
 	inferer, err := infer.NewInferer(model, sp)
 	if err != nil {
-		log.Printf("Failed to create inferer: %s", err)
-		return
+		log.Fatalf("Failed to create inferer: %s", err)
 	}
+
+	// create database
+	database.Database db = database.NewMongoDB();
 
 	// setup route handlers
 	resultsHandler := endpoints.GetResultsHandler(tempImgFolder, inferer)

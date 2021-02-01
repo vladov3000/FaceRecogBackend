@@ -16,6 +16,6 @@ func createTempImgFolder(tempImgFolder string) {
 
 	err = os.Mkdir(tempImgFolder, 0777)
 	if err != nil {
-		log.Printf("Error when creating %s: %s", tempImgFolder, err)
+		log.Fatalf("Error when creating %s: %s", tempImgFolder, err)
 	}
 }
