@@ -109,8 +109,3 @@ func testFreeInferer(t *testing.T, inferer Inferer) {
 		t.Errorf("Failed to free inferer: %s", err)
 	}
 }
-
-// inferer, _ := infer.NewInferer("build/model/model.dat", "build/model/shape_predictor.dat")
-// res := inferer.GetResults("test-images/obama.jpg")
-// fmt.Printf("%+v\n", res)
-// inferer.Free()
