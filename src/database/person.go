@@ -8,6 +8,7 @@ type Person struct {
 	Encoding    bson.A    `json:"-" bson:"encoding"`
 	ExtraFields bson.M    `json:"extra_field" bson:"extra_field"`
 	BBox        []float32 `json:"bbox" bson:"-"`
+	Known       bool      `json:"known"`
 }
 
 func NewPerson(title string, subtitle string, encoding []float32, extra bson.M) Person {

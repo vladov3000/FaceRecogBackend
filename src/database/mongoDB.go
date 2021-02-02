@@ -72,7 +72,7 @@ func (db MongoDB) AddPerson(person Person) error {
 	return nil
 }
 
-func (db MongoDB) GetPerson(filter bson.M) (Person, error) {
+func (db MongoDB) GetPerson(filter bson.M) (Person, bool, error) {
 	var res Person
 
 	ctx, cancel := getCtx()
@@ -80,12 +80,12 @@ func (db MongoDB) GetPerson(filter bson.M) (Person, error) {
 
 	cur := db.collection.FindOne(ctx, filter)
 	if err := cur.Err(); err == mongo.ErrNoDocuments {
-		return res, nil
+		return res, false, nil
 	}
 
 	if err := cur.Decode(&res); err != nil {
-		return res, errors.New(fmt.Sprintf("Couldn't decode %+v: %s", res, err))
+		return res, true, errors.New(fmt.Sprintf("Couldn't decode %+v: %s", res, err))
 	}
 
-	return res, nil
+	return res, true, nil
 }

@@ -163,13 +163,27 @@ func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.
 
 		// get Person from db using encoding
 
-		person, err := db.GetPerson(bson.M{"encoding": result.Encodings})
-		if err != nil {
-			log.Fatal(err)
-		}
-		person.BBox = result.BBoxes[0:4]
+		var people []database.Person
 
-		toSend, err := json.Marshal(person)
+		for i := 0; i < result.Nfaces; i++ {
+			person, found, err := db.GetPerson(bson.M{
+				"encoding": result.Encodings[i*128 : (i+1)*128],
+			})
+			if err != nil {
+				text := "500 - failed to get person from database"
+				log.Printf("Error: %s Response: %s", err, text)
+
+				w.WriteHeader(http.StatusInternalServerError)
+				fmt.Fprint(w, text)
+				return
+			}
+			person.Known = found
+
+			person.BBox = result.BBoxes[i*4 : (i+1)*4]
+			people = append(people, person)
+		}
+
+		toSend, err := json.Marshal(people)
 		if err != nil {
 			text := "500 - failed to marshal into json"
 			log.Printf("Error: %s Response: %s", err, text)
