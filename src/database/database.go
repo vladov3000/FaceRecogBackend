@@ -1,9 +1,9 @@
 package database
 
-import (
-	"go.mongodb.org/mongo-driver/mongo"
-)
+import "go.mongodb.org/mongo-driver/bson"
 
-interface Database {
+type Database interface {
 	Disconnect()
+	AddPerson(person Person) error
+	GetPerson(filter bson.M) (Person, error)
 }

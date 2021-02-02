@@ -11,14 +11,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/vladov3000/FaceRecogBackend/src/database"
 	"github.com/vladov3000/FaceRecogBackend/src/infer"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // maximum image that can be uploaded 10 << 20
 // specifies a maximum upload of 10 MB files.
 const MAX_IMG_SIZE = 10 << 20
 
-func GetResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
+func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.Database) ReqHandler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("Results Endpoint Hit")
 
@@ -143,7 +145,30 @@ func GetResultsHandler(tempImgFolder string, inferer infer.Inferer) ReqHandler {
 			return
 		}
 
-		toSend, err := json.Marshal(result)
+		// marshal to JSON and send back!
+
+		// toSend, err := json.Marshal(result)
+		// if err != nil {
+		// 	text := "500 - failed to marshal into json"
+		// 	log.Printf("Error: %s Response: %s", err, text)
+
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	fmt.Fprint(w, text)
+		// 	return
+		// }
+
+		// w.Header().Set("Content-Type", "application/json")
+		// w.WriteHeader(http.StatusOK)
+		// w.Write(toSend)
+
+		// get Person from db using encoding
+
+		person, err := db.GetPerson(bson.M{"encoding": result.Encodings})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		toSend, err := json.Marshal(person)
 		if err != nil {
 			text := "500 - failed to marshal into json"
 			log.Printf("Error: %s Response: %s", err, text)

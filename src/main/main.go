@@ -30,12 +30,35 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create inferer: %s", err)
 	}
+	defer inferer.Free()
 
 	// create database
-	database.Database db = database.NewMongoDB();
+	var db database.Database
+	db = database.NewMongoDB("FaceRecogApp")
+	defer db.Disconnect()
+
+	// result, err := inferer.GetResults("test-images/obama.jpg")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	//log.Printf("%+v", result)
+
+	// person := database.NewPerson("1", "1", result.Encodings)
+	//log.Printf("%+v", person)
+
+	// err = db.AddPerson(person)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// personFromDB, err := db.GetPerson(bson.M{"encoding": person.Encoding})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Printf("%+v", personFromDB)
 
 	// setup route handlers
-	resultsHandler := endpoints.GetResultsHandler(tempImgFolder, inferer)
+	resultsHandler := endpoints.GetResultsHandler(tempImgFolder, inferer, db)
 
 	http.HandleFunc("/status", endpoints.StatusHandler)
 	http.HandleFunc("/results", resultsHandler)
