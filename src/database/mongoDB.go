@@ -21,8 +21,13 @@ type MongoDB struct {
 	cancel     context.CancelFunc
 }
 
+func getCtx() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), 10*time.Second)
+}
+
 func NewMongoDB(dbName string) MongoDB {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := getCtx()
+	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
@@ -41,32 +46,39 @@ func NewMongoDB(dbName string) MongoDB {
 		dbName:     dbName,
 		collection: collection,
 		client:     client,
-		ctx:        ctx,
 		cancel:     cancel,
 	}
 }
 
 func (db MongoDB) Disconnect() {
-	db.cancel()
-	if err := db.client.Disconnect(db.ctx); err != nil {
+	ctx, cancel := getCtx()
+	defer cancel()
+
+	if err := db.client.Disconnect(ctx); err != nil {
 		log.Fatalf("Error while disconnecting: %s", err)
 	}
 }
 
 func (db MongoDB) AddPerson(person Person) error {
+	ctx, cancel := getCtx()
+	defer cancel()
+
 	data, err := bson.Marshal(person)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Failed to marshal %+v into bson: %s", person, err))
 	}
 
-	db.collection.InsertOne(db.ctx, data)
+	db.collection.InsertOne(ctx, data)
 	return nil
 }
 
 func (db MongoDB) GetPerson(filter bson.M) (Person, error) {
 	var res Person
 
-	cur := db.collection.FindOne(db.ctx, filter)
+	ctx, cancel := getCtx()
+	defer cancel()
+
+	cur := db.collection.FindOne(ctx, filter)
 	if err := cur.Err(); err == mongo.ErrNoDocuments {
 		return res, nil
 	}

@@ -168,6 +168,8 @@ func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.
 			log.Fatal(err)
 		}
 
+		log.Printf("%+v", person)
+
 		toSend, err := json.Marshal(person)
 		if err != nil {
 			text := "500 - failed to marshal into json"

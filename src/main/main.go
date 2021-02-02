@@ -41,10 +41,10 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-	//log.Printf("%+v", result)
+	// log.Printf("%+v", result)
 
-	// person := database.NewPerson("1", "1", result.Encodings)
-	//log.Printf("%+v", person)
+	// person := database.NewPerson("1", "1", result.Encodings, bson.M{"hello": "world"})
+	// log.Printf("%+v", person)
 
 	// err = db.AddPerson(person)
 	// if err != nil {
