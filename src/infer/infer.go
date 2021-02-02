@@ -11,9 +11,9 @@ import (
 )
 
 type Result struct {
-	Nfaces    int       `json:"nfaces"`
-	Encodings []float32 `json:"encodings"`
-	BBoxes    []float32 `json:"bboxes"`
+	Nfaces    int
+	Encodings []float32
+	BBoxes    []float32
 }
 
 type Inferer struct {

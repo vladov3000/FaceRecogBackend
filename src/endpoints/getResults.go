@@ -167,8 +167,7 @@ func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		log.Printf("%+v", person)
+		person.BBox = result.BBoxes[0:4]
 
 		toSend, err := json.Marshal(person)
 		if err != nil {
