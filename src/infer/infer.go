@@ -6,7 +6,6 @@ import "C"
 import (
 	"errors"
 	"os"
-	"reflect"
 	"unsafe"
 )
 
@@ -73,15 +72,15 @@ func cFloatArrToSlice(arr uintptr, len int) []float32 {
 	var res []float32
 
 	// not reccomended, we want our C and Go arrays seperate
-	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&res)))
-	sliceHeader.Cap = len
-	sliceHeader.Len = len
-	sliceHeader.Data = arr
+	// sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&res)))
+	// sliceHeader.Cap = len
+	// sliceHeader.Len = len
+	// sliceHeader.Data = arr
 
 	// deep copy
-	// for i := 0; i < len; i++ {
-	// 	res = append(res, *(*float32)(unsafe.Pointer(arr + uintptr(i)*4)))
-	// }
+	for i := 0; i < len; i++ {
+		res = append(res, *(*float32)(unsafe.Pointer(arr + uintptr(i)*4)))
+	}
 
 	return res
 }

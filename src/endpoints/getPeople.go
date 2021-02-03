@@ -20,9 +20,9 @@ import (
 // specifies a maximum upload of 10 MB files.
 const MAX_IMG_SIZE = 10 << 20
 
-func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.Database) ReqHandler {
+func GetPeopleHandler(tempImgFolder string, inferer infer.Inferer, db database.Database) ReqHandler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Print("Results Endpoint Hit")
+		log.Print("Get People Endpoint Hit")
 
 		if r.Method != http.MethodPost {
 			text := "405 - expected POST request"
@@ -177,11 +177,16 @@ func GetResultsHandler(tempImgFolder string, inferer infer.Inferer, db database.
 				fmt.Fprint(w, text)
 				return
 			}
+			if !found {
+				person.Encoding = database.Float32SliceToBsonA(result.Encodings[i*128 : (i+1)*128])
+			}
 			person.Known = found
 
 			person.BBox = result.BBoxes[i*4 : (i+1)*4]
 			people = append(people, person)
 		}
+
+		// marshal to JSON and send
 
 		toSend, err := json.Marshal(people)
 		if err != nil {

@@ -34,7 +34,7 @@ func main() {
 
 	// create database
 	var db database.Database
-	db = database.NewMongoDB("FaceRecogApp")
+	db = database.NewMongoDB("FaceRecogDB")
 	defer db.Disconnect()
 
 	// result, err := inferer.GetResults("test-images/obama.jpg")
@@ -43,7 +43,7 @@ func main() {
 	// }
 	// log.Printf("%+v", result)
 
-	// person := database.NewPerson("1", "1", result.Encodings, bson.M{"hello": "world"})
+	// person := database.NewPerson("b", "obama", result.Encodings, []string{"hello world", "former president"})
 	// log.Printf("%+v", person)
 
 	// err = db.AddPerson(person)
@@ -51,17 +51,20 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	// personFromDB, err := db.GetPerson(bson.M{"encoding": person.Encoding})
+	// personFromDB, _, err := db.GetPerson(bson.M{"encoding": person.Encoding})
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
 	// log.Printf("%+v", personFromDB)
 
 	// setup route handlers
-	resultsHandler := endpoints.GetResultsHandler(tempImgFolder, inferer, db)
+	getPeopleHandler := endpoints.GetPeopleHandler(tempImgFolder, inferer, db)
+	addPersonHandler := endpoints.AddPersonHandler(db)
 
+	http.Handle("/", http.FileServer(http.Dir("./static")))
 	http.HandleFunc("/status", endpoints.StatusHandler)
-	http.HandleFunc("/results", resultsHandler)
+	http.HandleFunc("/getPeople", getPeopleHandler)
+	http.HandleFunc("/addPerson", addPersonHandler)
 
 	// start server
 	log.Printf("Listening on port %d", port)
